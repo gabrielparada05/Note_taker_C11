@@ -50,6 +50,7 @@ fb.delete('/:id', (req, res) => {
     let filterNotes = parseNote.filter(note => note.id !== req.params.id);
     fs.writeFile('./db/db.json', JSON.stringify(filterNotes), (err)=> {
       if (err) throw err;
+
       res.json(filterNotes)
     })
   })
