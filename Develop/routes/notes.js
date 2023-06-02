@@ -3,6 +3,8 @@ const fs = require('fs');
 const { readFromFile, readAndAppend } = require('../helpers/fsUtils');
 const uuid = require('../helpers/uuid');
 
+ 
+
 // GET Route for retrieving all the note
 fb.get('/', (req, res) => {
   console.info(`${req.method} request received for note`);
@@ -19,12 +21,12 @@ fb.post('/', (req, res) => {
   const { title, text } = req.body;
 
   // If all the required properties are present
-  if (title && text) {
+  if (req.body) {
     // Variable for the object we will save
     const newNote = {
       title,
       text,
-      note_id: uuid(),
+      id: uuid(),
     };
 
     readAndAppend(newNote, './db/db.json');
@@ -40,4 +42,22 @@ fb.post('/', (req, res) => {
   }
 });
 
+
+
+fb.delete('/:id', (req, res) => {
+  fs.readFile('./db/db.json', (err,notes) =>  {
+    let parseNote = JSON.parse(notes); 
+    let filterNotes = parseNote.filter(note => note.id !== req.params.id);
+    fs.writeFile('./db/db.json', JSON.stringify(filterNotes), (err)=> {
+      if (err) throw err;
+      res.json(filterNotes)
+    })
+  })
+});
+
+
+
 module.exports = fb;
+
+
+
